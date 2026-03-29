@@ -24,7 +24,7 @@ const NavLink = forwardRef<HTMLAnchorElement, NavLinkProps>(
     // non-exact: matches if the path starts with the href (good for nested routes)
     const isActive = exact
       ? pathname === href
-      : pathname.startsWith(href as string);
+      : pathname?.startsWith(href as string) ?? false;
 
     return (
       <Link

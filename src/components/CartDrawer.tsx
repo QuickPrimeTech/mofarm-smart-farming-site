@@ -1,6 +1,9 @@
+"use client"; // Required for Context and State hooks
+
 import { X, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import Image from "next/image";
+
 const CartDrawer = () => {
   const {
     items,
@@ -12,88 +15,103 @@ const CartDrawer = () => {
     setIsCheckoutOpen,
   } = useCart();
 
+  // Prevents rendering anything if the cart isn't active
   if (!isCartOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end">
+    <div className="fixed inset-0 z-[100] flex justify-end">
+      {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-foreground/50"
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
         onClick={() => setIsCartOpen(false)}
       />
-      <div className="relative w-full max-w-md bg-card shadow-xl flex flex-col h-full animate-fade-in">
+
+      {/* Drawer Panel */}
+      <div className="relative w-full max-w-md bg-white shadow-2xl flex flex-col h-full animate-in slide-in-from-right duration-300">
         <div className="flex items-center justify-between border-b p-4">
-          <h2 className="font-heading text-lg font-bold flex items-center gap-2">
+          <h2 className="font-heading text-lg font-bold flex items-center gap-2 text-slate-900">
             <ShoppingBag className="h-5 w-5 text-primary" /> Your Cart
           </h2>
           <button
             onClick={() => setIsCartOpen(false)}
-            className="rounded-full p-1 hover:bg-muted"
+            className="rounded-full p-2 hover:bg-slate-100 transition-colors"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5 text-slate-500" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        {/* Scrollable Items Area */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {items.length === 0 ? (
-            <div className="text-center py-16 text-muted-foreground">
-              <ShoppingBag className="h-12 w-12 mx-auto mb-3 opacity-30" />
-              <p>Your cart is empty</p>
+            <div className="text-center py-20 text-slate-400">
+              <ShoppingBag className="h-16 w-16 mx-auto mb-4 opacity-20" />
+              <p className="text-lg">Your cart is empty</p>
               <button
                 onClick={() => setIsCartOpen(false)}
-                className="mt-4 text-primary font-semibold text-sm hover:underline"
+                className="mt-4 text-primary font-bold hover:underline transition"
               >
-                Continue Shopping
+                Start Shopping
               </button>
             </div>
           ) : (
             items.map((item) => (
               <div
                 key={item.product.id}
-                className="flex gap-3 rounded-lg border p-3"
+                className="flex gap-4 rounded-xl border border-slate-100 bg-slate-50/50 p-3"
               >
-                <Image
-                  src={item.product.image}
-                  alt={item.product.name}
-                  className="h-16 w-16 rounded-md object-cover"
-                />
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-semibold text-sm text-foreground truncate">
-                    {item.product.name}
-                  </h4>
-                  <p className="text-xs text-muted-foreground">
-                    KSh {item.product.price}/{item.product.unit}
-                  </p>
-                  <div className="flex items-center gap-2 mt-1">
+                <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg">
+                  <Image
+                    src={item.product.image}
+                    alt={item.product.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+
+                <div className="flex-1 min-w-0 flex flex-col justify-between">
+                  <div>
+                    <h4 className="font-bold text-sm text-slate-900 truncate">
+                      {item.product.name}
+                    </h4>
+                    <p className="text-xs text-slate-500">
+                      KSh {item.product.price.toLocaleString()} /{" "}
+                      {item.product.unit}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-3 mt-2">
                     <button
                       onClick={() =>
                         updateQuantity(item.product.id, item.quantity - 1)
                       }
-                      className="rounded-full border p-1 hover:bg-muted"
+                      className="rounded-md border bg-white p-1 hover:bg-primary hover:text-white transition-colors"
                     >
                       <Minus className="h-3 w-3" />
                     </button>
-                    <span className="text-sm font-semibold w-6 text-center">
+                    <span className="text-sm font-bold w-4 text-center">
                       {item.quantity}
                     </span>
                     <button
                       onClick={() =>
                         updateQuantity(item.product.id, item.quantity + 1)
                       }
-                      className="rounded-full border p-1 hover:bg-muted"
+                      className="rounded-md border bg-white p-1 hover:bg-primary hover:text-white transition-colors"
                     >
                       <Plus className="h-3 w-3" />
                     </button>
                   </div>
                 </div>
+
                 <div className="flex flex-col items-end justify-between">
                   <button
                     onClick={() => removeFromCart(item.product.id)}
-                    className="text-destructive hover:opacity-70"
+                    className="text-slate-300 hover:text-red-500 transition-colors"
+                    aria-label="Remove item"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
-                  <span className="text-sm font-bold text-primary">
-                    KSh {item.product.price * item.quantity}
+                  <span className="text-sm font-extrabold text-primary">
+                    KSh {(item.product.price * item.quantity).toLocaleString()}
                   </span>
                 </div>
               </div>
@@ -101,11 +119,12 @@ const CartDrawer = () => {
           )}
         </div>
 
+        {/* Footer / Summary Area */}
         {items.length > 0 && (
-          <div className="border-t p-4 space-y-3">
-            <div className="flex items-center justify-between font-heading font-bold text-lg">
-              <span>Total</span>
-              <span className="text-primary">
+          <div className="border-t bg-slate-50 p-6 space-y-4">
+            <div className="flex items-center justify-between font-heading font-bold text-xl">
+              <span className="text-slate-600">Total</span>
+              <span className="text-primary text-2xl">
                 KSh {totalPrice.toLocaleString()}
               </span>
             </div>
@@ -114,10 +133,13 @@ const CartDrawer = () => {
                 setIsCartOpen(false);
                 setIsCheckoutOpen(true);
               }}
-              className="w-full rounded-lg bg-primary py-3 font-heading font-bold text-primary-foreground hover:opacity-90 transition"
+              className="w-full rounded-xl bg-primary py-4 font-heading font-bold text-white shadow-lg shadow-primary/20 hover:brightness-105 active:scale-[0.98] transition"
             >
               Proceed to Checkout
             </button>
+            <p className="text-[10px] text-center text-slate-400 uppercase tracking-widest">
+              Secure Delivery to Nyeri & Surrounding Areas
+            </p>
           </div>
         )}
       </div>

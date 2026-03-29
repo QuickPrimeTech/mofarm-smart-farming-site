@@ -12,18 +12,21 @@ import heroGrains from "@/assets/hero-grains.jpg";
 
 const slides = [
   {
-    image: heroFruits,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801077/hero-fruits_zs58oz.jpg",
     title: "Farm-Fresh Fruits",
     subtitle:
       "Juicy, ripe & delivered straight from Nyeri farms to your kitchen",
   },
   {
-    image: heroVegetables,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801078/hero-vegetables_kbagyw.jpg",
     title: "Organic Vegetables",
     subtitle: "The freshest greens for restaurants, schools & bulk buyers",
   },
   {
-    image: heroGrains,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801077/hero-grains_hrr2xb.jpg",
     title: "Premium Grains & Cereals",
     subtitle: "Quality beans, rice, maize & more at wholesale prices",
   },

@@ -1,27 +1,4 @@
 import { StaticImageData } from "next/image";
-
-// Import your assets
-import oranges from "@/assets/product-oranges.jpg";
-import sukuma from "@/assets/product-sukuma.jpg";
-import beans from "@/assets/product-beans.jpg";
-import bananas from "@/assets/product-bananas.jpg";
-import mangoes from "@/assets/product-mangoes.jpg";
-import pineapple from "@/assets/product-pineapple.jpg";
-import tomatoes from "@/assets/product-tomatoes.jpg";
-import cabbage from "@/assets/product-cabbage.jpg";
-import onions from "@/assets/product-onions.jpg";
-import honey from "@/assets/product-honey.jpg";
-import milk from "@/assets/product-milk.jpg";
-import eggs from "@/assets/product-eggs.jpg";
-import rice from "@/assets/product-rice.jpg";
-import maize from "@/assets/product-maize.jpg";
-import watermelon from "@/assets/product-watermelon.jpg";
-import avocado from "@/assets/product-avocado.jpg";
-import peas from "@/assets/product-peas.jpg";
-import carrots from "@/assets/product-carrots.jpg";
-import spinach from "@/assets/product-spinach.jpg";
-import greengrams from "@/assets/product-greengrams.jpg";
-
 export type Product = {
   id: string;
   name: string;
@@ -40,7 +17,8 @@ export const products: Product[] = [
     price: 150,
     unit: "kg",
     category: "Fruits",
-    image: oranges,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801084/product-oranges_wemafp.jpg",
     popular: true,
   },
   {
@@ -49,7 +27,8 @@ export const products: Product[] = [
     price: 120,
     unit: "bunch",
     category: "Fruits",
-    image: bananas,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801076/product-bananas_biy18q.jpg",
   },
   {
     id: "mangoes",
@@ -57,7 +36,8 @@ export const products: Product[] = [
     price: 200,
     unit: "kg",
     category: "Fruits",
-    image: mangoes,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801078/product-mangoes_rygfum.jpg",
   },
   {
     id: "pineapple",
@@ -65,7 +45,8 @@ export const products: Product[] = [
     price: 180,
     unit: "piece",
     category: "Fruits",
-    image: pineapple,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801085/product-pineapple_xzrs8y.jpg",
   },
   {
     id: "watermelon",
@@ -73,7 +54,8 @@ export const products: Product[] = [
     price: 250,
     unit: "piece",
     category: "Fruits",
-    image: watermelon,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801090/product-watermelon_wwi8qy.jpg",
   },
   {
     id: "avocado",
@@ -81,7 +63,8 @@ export const products: Product[] = [
     price: 100,
     unit: "kg",
     category: "Fruits",
-    image: avocado,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801077/product-avocado_nj9tqu.jpg",
   },
 
   // Vegetables
@@ -91,7 +74,8 @@ export const products: Product[] = [
     price: 30,
     unit: "bunch",
     category: "Vegetables",
-    image: sukuma,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801090/product-sukuma_lmbsb9.jpg",
     popular: true,
   },
   {
@@ -100,7 +84,8 @@ export const products: Product[] = [
     price: 80,
     unit: "kg",
     category: "Vegetables",
-    image: tomatoes,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801090/product-tomatoes_hgyg6h.jpg",
   },
   {
     id: "cabbage",
@@ -108,7 +93,8 @@ export const products: Product[] = [
     price: 60,
     unit: "piece",
     category: "Vegetables",
-    image: cabbage,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801076/product-cabbage_rdzia6.jpg",
   },
   {
     id: "onions",
@@ -116,7 +102,8 @@ export const products: Product[] = [
     price: 100,
     unit: "kg",
     category: "Vegetables",
-    image: onions,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801078/product-onions_afedwq.jpg",
   },
   {
     id: "carrots",
@@ -124,7 +111,8 @@ export const products: Product[] = [
     price: 90,
     unit: "kg",
     category: "Vegetables",
-    image: carrots,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801077/product-carrots_qulwau.jpg",
   },
   {
     id: "spinach",
@@ -132,7 +120,8 @@ export const products: Product[] = [
     price: 40,
     unit: "bunch",
     category: "Vegetables",
-    image: spinach,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801086/product-spinach_gxer4m.jpg",
   },
   {
     id: "peas",
@@ -140,7 +129,8 @@ export const products: Product[] = [
     price: 120,
     unit: "kg",
     category: "Vegetables",
-    image: peas,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801085/product-peas_iaq99l.jpg",
   },
 
   // Grains
@@ -150,7 +140,8 @@ export const products: Product[] = [
     price: 180,
     unit: "kg",
     category: "Grains",
-    image: beans,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801076/product-beans_zktfd4.jpg",
     popular: true,
   },
   {
@@ -159,7 +150,8 @@ export const products: Product[] = [
     price: 200,
     unit: "kg",
     category: "Grains",
-    image: rice,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801085/product-rice_hp0txw.jpg",
   },
   {
     id: "maize",
@@ -167,7 +159,8 @@ export const products: Product[] = [
     price: 100,
     unit: "kg",
     category: "Grains",
-    image: maize,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801078/product-maize_ds7awa.jpg",
   },
   {
     id: "greengrams",
@@ -175,7 +168,8 @@ export const products: Product[] = [
     price: 220,
     unit: "kg",
     category: "Grains",
-    image: greengrams,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801078/product-greengrams_ahqkfs.jpg",
   },
 
   // Dairy & Poultry
@@ -185,7 +179,8 @@ export const products: Product[] = [
     price: 800,
     unit: "500ml",
     category: "Dairy & Others",
-    image: honey,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801078/product-honey_zvcsfz.jpg",
   },
   {
     id: "milk",
@@ -193,7 +188,8 @@ export const products: Product[] = [
     price: 70,
     unit: "litre",
     category: "Dairy & Others",
-    image: milk,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801078/product-milk_betwdi.jpg",
   },
   {
     id: "eggs",
@@ -201,7 +197,8 @@ export const products: Product[] = [
     price: 450,
     unit: "tray",
     category: "Dairy & Others",
-    image: eggs,
+    image:
+      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801077/product-eggs_rsz47d.jpg",
   },
 ];
 

@@ -178,28 +178,26 @@ export const products: Product[] = [
     name: "Honey",
     price: 800,
     unit: "500ml",
-    category: "Dairy & Others",
+    category: "Apiary",
     image:
       "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801078/product-honey_zvcsfz.jpg",
   },
-  {
-    id: "milk",
-    name: "Fresh Milk",
-    price: 70,
-    unit: "litre",
-    category: "Dairy & Others",
-    image:
-      "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801078/product-milk_betwdi.jpg",
-  },
+
   {
     id: "eggs",
     name: "Eggs",
     price: 450,
     unit: "tray",
-    category: "Dairy & Others",
+    category: "Poultry",
     image:
       "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801077/product-eggs_rsz47d.jpg",
   },
 ];
 
-export const categories = ["Fruits", "Vegetables", "Grains", "Dairy & Others"];
+export const categories = [
+  "Fruits",
+  "Vegetables",
+  "Grains",
+  "Poultry",
+  "Apiary",
+];

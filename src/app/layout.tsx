@@ -4,12 +4,12 @@ import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import Navbar from "@/components/Navbar";
 import CartDrawer from "@/components/CartDrawer";
-import CheckoutModal from "@/components/CheckoutModal";
+import CheckoutModal from "@/components/chekout/CheckoutModal";
 import Footer from "@/components/Footer"; // Import it here
 import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const montserrat = Montserrat({
@@ -29,7 +29,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={cn("scroll-smooth", "font-sans", geist.variable)}>
+    <html
+      lang="en"
+      className={cn("scroll-smooth", "font-sans", geist.variable)}
+    >
       <body
         className={`${inter.variable} ${montserrat.variable} font-sans antialiased`}
       >

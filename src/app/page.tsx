@@ -1,5 +1,5 @@
 import HeroCarousel from "@/components/HeroCarousel";
-import PopularProducts from "@/components/PopularProducts";
+import SpecialOffers from "@/components/SpecialOffers";
 import ProductsByCategory from "@/components/ProductsByCategory";
 import ContactSection from "@/components/ContactSection";
 import FAQSection from "@/components/FAQSection";
@@ -9,7 +9,7 @@ const Home = () => {
   return (
     <>
       <HeroCarousel />
-      <PopularProducts />
+      <SpecialOffers />
       <ProductsByCategory />
       <CTASection />
       <FAQSection />

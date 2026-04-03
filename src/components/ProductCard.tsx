@@ -1,7 +1,8 @@
+// components/ProductCard.tsx
 "use client";
 
 import { Plus, Check } from "lucide-react";
-import { Product } from "@/data/products";
+import { Product } from "@/types/product";
 import { useCart } from "@/context/CartContext";
 import { useState } from "react";
 import Image from "next/image";
@@ -13,21 +14,22 @@ const ProductCard = ({ product }: { product: Product }) => {
   const handleAdd = () => {
     addToCart(product);
     setAdded(true);
-    // Visual feedback duration
     setTimeout(() => setAdded(false), 1200);
   };
 
   return (
     <div className="group rounded-lg border bg-card shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-      <div className="relative aspect-square overflow-hidden bg-muted">
-        <Image
-          src={product.image}
-          alt={product.name}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
-        />
-      </div>
+      {product.image_url && (
+        <div className="relative aspect-square overflow-hidden bg-muted">
+          <Image
+            src={product.image_url}
+            alt={product.name}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+        </div>
+      )}
       <div className="p-3">
         <span className="text-xs text-muted-foreground">
           {product.category}
@@ -39,7 +41,7 @@ const ProductCard = ({ product }: { product: Product }) => {
           <span className="font-bold text-primary">
             KSh {product.price.toLocaleString()}
             <span className="text-xs font-normal text-muted-foreground">
-              /{product.unit}
+              /kg
             </span>
           </span>
           <button

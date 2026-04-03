@@ -7,7 +7,7 @@ import React, {
   useCallback,
   useEffect,
 } from "react";
-import { Product } from "@/data/products";
+import { Product } from "@/types/product"; // Shared type
 
 export type CartItem = {
   product: Product;

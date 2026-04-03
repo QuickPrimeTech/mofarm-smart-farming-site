@@ -6,9 +6,6 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 // Assuming these are in your public folder or handled by a loader
-import heroFruits from "@/assets/hero-fruits.jpg";
-import heroVegetables from "@/assets/hero-vegetables.jpg";
-import heroGrains from "@/assets/hero-grains.jpg";
 
 const slides = [
   {

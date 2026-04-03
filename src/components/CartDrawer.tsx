@@ -60,12 +60,16 @@ const CartDrawer = () => {
                 className="flex gap-4 rounded-xl border border-slate-100 bg-slate-50/50 p-3"
               >
                 <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg">
-                  <Image
-                    src={item.product.image}
-                    alt={item.product.name}
-                    fill
-                    className="object-cover"
-                  />
+                  {item.product.image_url && (
+                    <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg">
+                      <Image
+                        src={item.product.image_url}
+                        alt={item.product.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex-1 min-w-0 flex flex-col justify-between">
@@ -74,8 +78,7 @@ const CartDrawer = () => {
                       {item.product.name}
                     </h4>
                     <p className="text-xs text-slate-500">
-                      KSh {item.product.price.toLocaleString()} /{" "}
-                      {item.product.unit}
+                      KSh {item.product.price.toLocaleString()} /kg
                     </p>
                   </div>
 

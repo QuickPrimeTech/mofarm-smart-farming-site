@@ -6,7 +6,12 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "res.cloudinary.com",
-        pathname: "/**", // Allows all paths under your Cloudinary account
+        pathname: "/meshack-kipkemoi/**", // Allows all paths under your Cloudinary account
+      },
+      {
+        protocol: "https",
+        hostname: "jnsbknjphqyoztefixrk.supabase.co",
+        pathname: "/storage/v1/object/**", // Allows all paths under the specified Supabase storage bucket
       },
     ],
   },

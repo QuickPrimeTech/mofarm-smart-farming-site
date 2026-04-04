@@ -1,22 +1,15 @@
 import Link from "next/link";
 import { Phone, MapPin, Clock } from "lucide-react";
-import { Image } from "./ui/image";
+import { MofarmLogo } from "./logo";
 
 const Footer = () => (
-  <footer className="bg-foreground text-primary-foreground py-12">
+  <footer className="bg-muted text-muted-foreground py-12">
     <div className="container mx-auto px-4">
       <div className="grid md:grid-cols-3 gap-8 mb-8">
         <div>
           <div className="flex justify-start items-center gap-2">
-            {" "}
-            <Image
-              src="/mofarmlogo.jpeg"
-              width={50}
-              height={50}
-              alt="Mofarm Logo"
-              className="rounded-full object-cover"
-            />
-            <h3 className="font-heading text-lg font-bold mb-3">
+            <MofarmLogo className="size-8" />
+            <h3 className="font-heading text-lg font-bold">
               Mofarm Smart Farming
             </h3>
           </div>

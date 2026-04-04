@@ -8,6 +8,7 @@ import CheckoutModal from "@/components/chekout/CheckoutModal";
 import Footer from "@/components/Footer"; // Import it here
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -32,22 +33,30 @@ export default function RootLayout({
     <html
       lang="en"
       className={cn("scroll-smooth", "font-sans", geist.variable)}
+      suppressHydrationWarning
     >
       <body
         className={`${inter.variable} ${montserrat.variable} font-sans antialiased`}
       >
-        <CartProvider>
-          <Toaster position="top-center" richColors />
-          <Navbar />
-          {/* Use a flex-col wrapper to push footer to bottom on short pages */}
-          <div className="flex flex-col min-h-screen">
-            <main className="grow">{children}</main>
-            <Footer />
-          </div>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <CartProvider>
+            <Toaster position="top-center" richColors />
+            <Navbar />
+            {/* Use a flex-col wrapper to push footer to bottom on short pages */}
+            <div className="flex flex-col min-h-screen">
+              <main className="grow">{children}</main>
+              <Footer />
+            </div>
 
-          <CartDrawer />
-          <CheckoutModal />
-        </CartProvider>
+            <CartDrawer />
+            <CheckoutModal />
+          </CartProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

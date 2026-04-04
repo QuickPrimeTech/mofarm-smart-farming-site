@@ -1,6 +1,5 @@
 // @/components/chekout/review.tsx
 "use client";
-
 import { useCart } from "@/context/CartContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
@@ -15,8 +14,8 @@ import { Input } from "@/components/ui/input";
 import { CheckoutFormData, checkoutSchema } from "@/schemas/checkout";
 import { useCheckoutStore } from "@/stores/checkout-store";
 import { useEffect } from "react";
-import axioS from "axios";
 import { toast } from "sonner";
+import axios from "axios";
 
 export const Review = () => {
   const { items, totalPrice } = useCart();
@@ -37,44 +36,59 @@ export const Review = () => {
   const form = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
-      customerName: name,
-      customerPhone: phone,
-      deliveryAddress: address,
+      name: name,
+      phone: phone,
+      address: address,
+      email: email,
     },
   });
 
   // Sync form with store on mount
   useEffect(() => {
     form.reset({
-      customerName: name,
-      customerEmail: email,
-      customerPhone: phone,
-      deliveryAddress: address,
+      name: name,
+      email: email,
+      phone: phone,
+      address: address,
     });
-  }, [name, phone, address, form]);
+  }, [name, phone, address, email, form]);
 
   const handleProceedToPay = async (data: CheckoutFormData) => {
     // Ensure store is up to date
-    setName(data.customerName);
-    setEmail(data.customerEmail);
-    setPhone(data.customerPhone);
-    setAddress(data.deliveryAddress);
+    setName(data.name);
+    setEmail(data.email);
+    setPhone(data.phone);
+    setAddress(data.address);
 
-    toast.loading("Initiating M-Pesa payment...");
-
-    //Send the user the stk push
-    const res = await axioS.post("/api/checkout/pay", {
-      name: data.customerName,
-      phone: data.customerPhone,
-      email: data.customerEmail,
-      address: data.deliveryAddress,
+    toast.loading("Initiating M-Pesa payment...", {
+      id: "checkout-payment",
     });
 
-    if (res.status === 200) {
-      toast.dismiss();
+    try {
+      await axios.post("/api/checkout/pay", data);
+      toast.dismiss("checkout-payment");
       toast.success("STK Push sent! Check your phone.");
-      // Move to payment step
       setStep("payment");
+    } catch (error) {
+      toast.dismiss("checkout-payment");
+
+      if (axios.isAxiosError(error) && error.response) {
+        const { status, data } = error.response;
+
+        if (status === 400 && data.errors) {
+          // Render validation errors from backend
+          Object.entries(data.errors).forEach(([field, messages]) => {
+            form.setError(field as keyof CheckoutFormData, {
+              message: (messages as string[])[0],
+            });
+          });
+          toast.error("Validation failed");
+        } else {
+          toast.error(data.message || "Payment failed");
+        }
+      } else {
+        toast.error("Network error");
+      }
     }
   };
 
@@ -111,7 +125,7 @@ export const Review = () => {
       <div className="pt-4 border-t-2 border-dashed ">
         <FieldGroup>
           <Controller
-            name="customerName"
+            name="name"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
@@ -131,7 +145,7 @@ export const Review = () => {
           />
 
           <Controller
-            name="customerPhone"
+            name="phone"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
@@ -154,7 +168,7 @@ export const Review = () => {
           />
 
           <Controller
-            name="customerEmail"
+            name="email"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
@@ -175,7 +189,7 @@ export const Review = () => {
           />
 
           <Controller
-            name="deliveryAddress"
+            name="address"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>

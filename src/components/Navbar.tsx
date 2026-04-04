@@ -153,47 +153,50 @@ const Navbar = () => {
                   </SheetTitle>
                 </SheetHeader>
 
-              <div className="flex flex-col h-full justify-between p-6">
-                {/* Nav links */}
-                <nav className="flex flex-col gap-1 mt-6">
-                  {navLinks.map(({ id, label }) => (
-                    <>
-                      <Button
-                        key={id}
-                        variant="ghost"
-                        className="justify-start text-base font-normal h-11 rounded-lg text-foreground hover:text-primary hover:bg-primary/10"
-                        onClick={() => scrollTo(id)}
-                      >
-                        {label}
-                      </Button>
-                      <Separator />
-                    </>
-                  ))}
-                </nav>
+                <div className="flex flex-col h-full justify-between p-6">
+                  {/* Nav links */}
+                  <nav className="flex flex-col gap-1 mt-6">
+                    {navLinks.map(({ id, label }) => (
+                      <>
+                        <Button
+                          key={id}
+                          variant="ghost"
+                          className="justify-start text-base font-normal h-11 rounded-lg text-foreground hover:text-primary hover:bg-primary/10"
+                          onClick={() => scrollTo(id)}
+                        >
+                          {label}
+                        </Button>
+                        <Separator key={id} />
+                      </>
+                    ))}
+                  </nav>
 
-                {/* Contact info */}
-                <div className="bg-muted rounded-xl p-4 space-y-2.5">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
-                    Contact & Delivery
-                  </p>
-                  <div className="flex items-center gap-2.5 text-sm text-foreground">
-                    <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <Phone className="h-3.5 w-3.5 text-primary" />
+                  {/* Contact info */}
+                  <div className="bg-muted rounded-xl p-4 space-y-2.5">
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
+                      Contact & Delivery
+                    </p>
+                    <div className="flex items-center gap-2.5 text-sm text-foreground">
+                      <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <Phone className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      +254 703 946365
                     </div>
-                    +254 703 946365
-                  </div>
-                  <div className="flex items-center gap-2.5 text-sm text-foreground">
-                    <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <MapPin className="h-3.5 w-3.5 text-primary" />
+                    <div className="flex items-center gap-2.5 text-sm text-foreground">
+                      <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <MapPin className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      Nyeri, Kenya
                     </div>
-                    Nyeri, Kenya
+                    <div className="pt-1">
+                      <Badge
+                        variant="secondary"
+                        className="text-xs font-medium"
+                      >
+                        Mon, Wed & Sat Delivery
+                      </Badge>
+                    </div>
                   </div>
-                  <div className="pt-1">
-                    <Badge variant="secondary" className="text-xs font-medium">
-                      Mon, Wed & Sat Delivery
-                    </Badge>
-                  </div>
-                </div>
                 </div>
               </SheetContent>
             </Sheet>

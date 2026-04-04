@@ -1,8 +1,12 @@
-// @/src/components/chekout/payment.tsx
+// @/components/checkout/payment.tsx
 "use client";
+
+import { useEffect, useState } from "react";
 import { useCheckoutStore, PaymentStatus } from "@/stores/checkout-store";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, XCircle, Loader } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
 
 const statusConfig: Record<
   PaymentStatus,
@@ -46,7 +50,10 @@ export function Payment() {
     phone,
     email,
     address,
+    transactionId, // Get this from your store
   } = useCheckoutStore();
+
+  const [isListening, setIsListening] = useState(false);
 
   const orderDetails = [
     { label: "Customer", value: name },
@@ -55,23 +62,93 @@ export function Payment() {
     { label: "Delivery", value: address },
   ];
 
-  const handleSimulate = (status: PaymentStatus) => {
-    if (status === "pending") {
-      setPaymentStatus("pending");
-      // Auto-complete after 2 seconds for demo
-      setTimeout(() => {
-        setPaymentStatus("completed");
-        setTimeout(() => setStep("done"), 800);
-      }, 2000);
-    } else {
-      setPaymentStatus(status);
-    }
-  };
+  useEffect(() => {
+    if (!transactionId) return;
+
+    const supabase = createClient();
+
+    // Initial fetch to get current status
+    const fetchInitialStatus = async () => {
+      const { data, error } = await supabase
+        .from("transactions")
+        .select("status")
+        .eq("id", transactionId)
+        .single();
+
+      if (error) {
+        console.error("Error fetching initial status:", error);
+        return;
+      }
+
+      if (data && data.status !== "pending") {
+        setPaymentStatus(data.status as PaymentStatus);
+        if (data.status === "completed") {
+          setTimeout(() => setStep("done"), 800);
+        }
+      }
+    };
+
+    fetchInitialStatus();
+
+    // Subscribe to realtime changes
+    const channel = supabase
+      .channel(`transaction_${transactionId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "transactions",
+          filter: `id=eq.${transactionId}`,
+        },
+        (payload) => {
+          console.log("Realtime update received:", payload);
+
+          const newStatus = payload.new.status as PaymentStatus;
+
+          // Update UI based on new status
+          setPaymentStatus(newStatus);
+
+          if (newStatus === "completed") {
+            toast.success("Payment completed successfully!");
+            setTimeout(() => setStep("done"), 800);
+          } else if (newStatus === "failed") {
+            toast.error("Payment failed. Please try again.");
+          }
+        },
+      )
+      .subscribe((status) => {
+        console.log("Realtime subscription status:", status);
+        setIsListening(status === "SUBSCRIBED");
+      });
+
+    // Cleanup subscription on unmount
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [transactionId, setPaymentStatus, setStep]);
 
   const currentStatus = statusConfig[paymentStatus];
 
+  // Retry payment handler
+  const handleRetry = async () => {
+    // Reset to review step to re-initiate payment
+    setStep("review");
+  };
+
   return (
     <div className="space-y-6">
+      {/* Connection Status Indicator */}
+      {isListening && paymentStatus === "pending" && (
+        <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+          </span>
+          Waiting for payment confirmation...
+        </div>
+      )}
+
       {/* Order Summary */}
       <div className="bg-muted/50 p-4 rounded-lg space-y-2 text-sm border">
         <h4 className="font-semibold text-foreground">Order Details</h4>
@@ -104,10 +181,7 @@ export function Payment() {
         {/* Action Buttons */}
         <div className="flex gap-2">
           {paymentStatus === "failed" && (
-            <Button
-              onClick={() => handleSimulate("pending")}
-              className="flex-1"
-            >
+            <Button onClick={handleRetry} className="flex-1">
               Retry Payment
             </Button>
           )}

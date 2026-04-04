@@ -31,6 +31,7 @@ export const Review = () => {
     setAddress,
     setStep,
     setEmail,
+    setTransationId,
   } = useCheckoutStore();
 
   const form = useForm<CheckoutFormData>({
@@ -65,7 +66,8 @@ export const Review = () => {
     });
 
     try {
-      await axios.post("/api/checkout/pay", { ...data, items });
+      const res = await axios.post("/api/checkout/pay", { ...data, items });
+      setTransationId(res.data.transactionId);
       toast.dismiss("checkout-payment");
       toast.success("STK Push sent! Check your phone.");
       setStep("payment");

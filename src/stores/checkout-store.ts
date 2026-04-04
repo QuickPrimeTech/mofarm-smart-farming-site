@@ -18,6 +18,11 @@ type CheckoutState = {
   // Payment status
   paymentStatus: PaymentStatus;
 
+  //Transaction ID for checkout
+  transactionId: string | null;
+
+  setTransationId: (id: string) => void;
+
   // Actions
   setName: (name: string) => void;
   setEmail: (email: string) => void;
@@ -37,6 +42,10 @@ export const useCheckoutStore = create<CheckoutState>()(
     address: "",
     step: "review",
     paymentStatus: "pending",
+
+    transactionId: null,
+
+    setTransationId: (id) => set({ transactionId: id }),
 
     // Form actions
     setName: (name) =>

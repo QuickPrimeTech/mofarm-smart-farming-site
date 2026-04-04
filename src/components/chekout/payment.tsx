@@ -1,10 +1,41 @@
 // @/src/components/chekout/payment.tsx
 "use client";
-
-import { useCheckoutStore } from "@/stores/checkout-store";
+import { useCheckoutStore, PaymentStatus } from "@/stores/checkout-store";
 import { Button } from "@/components/ui/button";
-import { Loader2, CheckCircle2, XCircle } from "lucide-react";
-import { useCart } from "@/context/CartContext";
+import { CheckCircle2, XCircle, Loader } from "lucide-react";
+
+const statusConfig: Record<
+  PaymentStatus,
+  {
+    icon: React.ReactNode;
+    title: string;
+    description: string;
+    iconColor: string;
+    textColor: string;
+  }
+> = {
+  pending: {
+    icon: <Loader className="size-12 animate-spin mx-auto" />,
+    title: "Processing M-Pesa payment...",
+    description: "Check your phone for STK push",
+    iconColor: "text-primary",
+    textColor: "text-muted-foreground",
+  },
+  completed: {
+    icon: <CheckCircle2 className="size-12 mx-auto" />,
+    title: "Payment successful!",
+    description: "Your order has been confirmed",
+    iconColor: "text-green-500",
+    textColor: "text-green-600",
+  },
+  failed: {
+    icon: <XCircle className="size-12 mx-auto" />,
+    title: "Payment failed",
+    description: "Please try again or use a different method",
+    iconColor: "text-destructive",
+    textColor: "text-destructive",
+  },
+};
 
 export function Payment() {
   const {
@@ -13,112 +44,85 @@ export function Payment() {
     setStep,
     name,
     phone,
+    email,
     address,
-    resetCheckout,
   } = useCheckoutStore();
 
-  const { clearCart, setIsCheckoutOpen } = useCart();
+  const orderDetails = [
+    { label: "Customer", value: name },
+    { label: "Phone", value: phone },
+    { label: "Email", value: email },
+    { label: "Delivery", value: address },
+  ];
 
-  const handlePayment = async () => {
-    setPaymentStatus("pending");
-
-    try {
-      // Simulate M-Pesa API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Randomly succeed for demo (replace with actual API logic)
-      const success = true;
-
-      if (success) {
+  const handleSimulate = (status: PaymentStatus) => {
+    if (status === "pending") {
+      setPaymentStatus("pending");
+      // Auto-complete after 2 seconds for demo
+      setTimeout(() => {
         setPaymentStatus("completed");
-        setTimeout(() => {
-          setStep("done");
-          // Optional: Clear cart on success
-          // clearCart();
-        }, 1000);
-      } else {
-        setPaymentStatus("failed");
-      }
-    } catch (error) {
-      setPaymentStatus("failed");
+        setTimeout(() => setStep("done"), 800);
+      }, 2000);
+    } else {
+      setPaymentStatus(status);
     }
   };
 
-  const handleClose = () => {
-    setIsCheckoutOpen(false);
-    setTimeout(() => {
-      resetCheckout();
-    }, 300);
-  };
-
-  // Access form data from store for payment processing
-  const orderDetails = {
-    customer: name,
-    phone: phone,
-    address: address,
-  };
+  const currentStatus = statusConfig[paymentStatus];
 
   return (
     <div className="space-y-6">
-      {/* Order Summary from Store */}
-      <div className="bg-slate-50 p-4 rounded-lg space-y-2 text-sm">
-        <h4 className="font-semibold text-slate-900">Order Details</h4>
-        <div className="flex justify-between">
-          <span className="text-slate-600">Customer:</span>
-          <span className="font-medium">{orderDetails.customer || "N/A"}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-slate-600">Phone:</span>
-          <span className="font-medium">{orderDetails.phone || "N/A"}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-slate-600">Delivery:</span>
-          <span className="font-medium">{orderDetails.address || "N/A"}</span>
-        </div>
+      {/* Order Summary */}
+      <div className="bg-muted/50 p-4 rounded-lg space-y-2 text-sm border">
+        <h4 className="font-semibold text-foreground">Order Details</h4>
+        {orderDetails.map(({ label, value }) => (
+          <div key={label} className="flex justify-between">
+            <span className="text-muted-foreground">{label}:</span>
+            <span className="font-medium text-foreground">
+              {value || "N/A"}
+            </span>
+          </div>
+        ))}
       </div>
 
-      {/* Payment Status Display */}
-      {paymentStatus === "pending" && (
-        <div className="text-center py-8 space-y-4">
-          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
-          <p className="text-slate-600">Processing M-Pesa payment...</p>
-          <p className="text-sm text-slate-500">
-            Check your phone {phone} for STK push
-          </p>
+      <div className={`space-y-4 p-2 rounded-lg border bg-muted/50`}>
+        {/* Status Display */}
+        <div className="text-center py-8 space-y-3">
+          <div className={currentStatus.iconColor}>{currentStatus.icon}</div>
+          <div className="space-y-1">
+            <p className={`font-medium ${currentStatus.textColor}`}>
+              {currentStatus.title}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {paymentStatus === "pending"
+                ? `Check your phone ${phone} for STK push`
+                : currentStatus.description}
+            </p>
+          </div>
         </div>
-      )}
 
-      {paymentStatus === "completed" && (
-        <div className="text-center py-8 space-y-4">
-          <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto" />
-          <p className="text-green-600 font-medium">Payment successful!</p>
-        </div>
-      )}
+        {/* Action Buttons */}
+        <div className="flex gap-2">
+          {paymentStatus === "failed" && (
+            <Button
+              onClick={() => handleSimulate("pending")}
+              className="flex-1"
+            >
+              Retry Payment
+            </Button>
+          )}
 
-      {paymentStatus === "failed" && (
-        <div className="text-center py-8 space-y-4">
-          <XCircle className="h-12 w-12 text-red-500 mx-auto" />
-          <p className="text-red-600 font-medium">Payment failed</p>
-          <Button onClick={handlePayment} variant="outline" className="w-full">
-            Retry Payment
-          </Button>
+          {(paymentStatus === "completed" || paymentStatus === "failed") && (
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => setStep("review")}
+            >
+              Back to Review
+            </Button>
+          )}
         </div>
-      )}
-
-      {paymentStatus !== "pending" && paymentStatus !== "completed" && (
-        <div className="space-y-3">
-          <Button onClick={handlePayment} className="w-full" disabled={!phone}>
-            Pay via M-Pesa
-          </Button>
-          <Button
-            variant="ghost"
-            className="w-full"
-            onClick={() => setStep("review")}
-          >
-            Back to Review
-          </Button>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

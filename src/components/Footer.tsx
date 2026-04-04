@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Phone, MapPin, Clock } from "lucide-react";
-import Image from "next/image";
+import { Image } from "./ui/image";
+
 const Footer = () => (
   <footer className="bg-foreground text-primary-foreground py-12">
     <div className="container mx-auto px-4">

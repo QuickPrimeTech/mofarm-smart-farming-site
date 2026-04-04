@@ -5,7 +5,7 @@ import { Plus, Check } from "lucide-react";
 import { Product } from "@/types/product";
 import { useCart } from "@/context/CartContext";
 import { useState } from "react";
-import Image from "next/image";
+import { Image } from "./ui/image";
 
 const ProductCard = ({ product }: { product: Product }) => {
   const { addToCart } = useCart();

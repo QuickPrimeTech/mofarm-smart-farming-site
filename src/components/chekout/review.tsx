@@ -15,6 +15,8 @@ import { Input } from "@/components/ui/input";
 import { CheckoutFormData, checkoutSchema } from "@/schemas/checkout";
 import { useCheckoutStore } from "@/stores/checkout-store";
 import { useEffect } from "react";
+import axioS from "axios";
+import { toast } from "sonner";
 
 export const Review = () => {
   const { items, totalPrice, setIsCheckoutOpen, clearCart } = useCart();
@@ -22,13 +24,14 @@ export const Review = () => {
   // Get store state and actions
   const {
     name,
+    email,
     phone,
     address,
     setName,
     setPhone,
     setAddress,
     setStep,
-    resetCheckout,
+    setEmail,
   } = useCheckoutStore();
 
   const form = useForm<CheckoutFormData>({
@@ -44,75 +47,68 @@ export const Review = () => {
   useEffect(() => {
     form.reset({
       customerName: name,
+      customerEmail: email,
       customerPhone: phone,
       deliveryAddress: address,
     });
   }, [name, phone, address, form]);
 
-  // Watch form changes and update store in real-time
-  const watchedName = form.watch("customerName");
-  const watchedPhone = form.watch("customerPhone");
-  const watchedAddress = form.watch("deliveryAddress");
-
-  useEffect(() => {
-    if (watchedName !== undefined) setName(watchedName);
-  }, [watchedName, setName]);
-
-  useEffect(() => {
-    if (watchedPhone !== undefined) setPhone(watchedPhone);
-  }, [watchedPhone, setPhone]);
-
-  useEffect(() => {
-    if (watchedAddress !== undefined) setAddress(watchedAddress);
-  }, [watchedAddress, setAddress]);
-
-  const handleClose = () => {
-    setIsCheckoutOpen(false);
-    setTimeout(() => {
-      setStep("review");
-      form.reset();
-    }, 300);
-  };
-
-  const handleProceedToPay = (data: CheckoutFormData) => {
+  const handleProceedToPay = async (data: CheckoutFormData) => {
     // Ensure store is up to date
     setName(data.customerName);
+    setEmail(data.customerEmail);
     setPhone(data.customerPhone);
     setAddress(data.deliveryAddress);
 
-    // Move to payment step
-    setStep("payment");
+    toast.loading("Initiating M-Pesa payment...");
+
+    //Send the user the stk push
+    const res = await axioS.post("/api/checkout/pay", {
+      name: data.customerName,
+      phone: data.customerPhone,
+      email: data.customerEmail,
+      address: data.deliveryAddress,
+    });
+
+    if (res.status === 200) {
+      toast.dismiss();
+      toast.success("STK Push sent! Check your phone.");
+      // Move to payment step
+      setStep("payment");
+    }
   };
 
   return (
     <form
       onSubmit={form.handleSubmit(handleProceedToPay)}
-      className="space-y-4"
+      className="space-y-3"
     >
-      <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
-        {items.map((item) => (
-          <div
-            key={item.product.id}
-            className="flex justify-between text-sm py-1 border-b"
-          >
-            <span>
-              {item.product.name} × {item.quantity}
-            </span>
-            <span className="font-semibold">
-              KSh {(item.product.price * item.quantity).toLocaleString()}
-            </span>
-          </div>
-        ))}
+      <div className="space-y-2">
+        <div className="space-y-2 max-h-40 pr-2">
+          {items.map((item) => (
+            <div
+              key={item.product.id}
+              className="flex justify-between text-sm py-1 border-b"
+            >
+              <span>
+                {item.product.name} × {item.quantity}
+              </span>
+              <span className="font-semibold">
+                KSh {(item.product.price * item.quantity).toLocaleString()}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div className="pt-3 flex justify-between items-center">
+          <span className="font-bold text-lg">Total</span>
+          <span className="text-primary font-bold text-xl">
+            KSh {totalPrice.toLocaleString()}
+          </span>
+        </div>
       </div>
 
-      <div className="pt-3 flex justify-between items-center border-t">
-        <span className="font-bold text-lg">Total</span>
-        <span className="text-primary font-bold text-xl">
-          KSh {totalPrice.toLocaleString()}
-        </span>
-      </div>
-
-      <div className="pt-4 border-t">
+      <div className="pt-4 border-t-2 border-dashed ">
         <FieldGroup>
           <Controller
             name="customerName"
@@ -149,6 +145,27 @@ export const Review = () => {
                   placeholder="M-Pesa Phone Number"
                   aria-invalid={fieldState.invalid}
                   autoComplete="tel"
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+
+          <Controller
+            name="customerEmail"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="checkout-email">Email</FieldLabel>
+                <Input
+                  {...field}
+                  id="checkout-email"
+                  type="email"
+                  placeholder="Email (example@domain.com)"
+                  aria-invalid={fieldState.invalid}
+                  autoComplete="email"
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />

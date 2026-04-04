@@ -8,6 +8,7 @@ export type PaymentStatus = "pending" | "completed" | "failed";
 type CheckoutState = {
   // Form fields
   name: string;
+  email: string;
   phone: string;
   address: string;
 
@@ -19,6 +20,7 @@ type CheckoutState = {
 
   // Actions
   setName: (name: string) => void;
+  setEmail: (email: string) => void;
   setPhone: (phone: string) => void;
   setAddress: (address: string) => void;
   setStep: (step: CheckoutStep) => void;
@@ -30,6 +32,7 @@ export const useCheckoutStore = create<CheckoutState>()(
   immer((set) => ({
     // Initial state
     name: "",
+    email: "",
     phone: "",
     address: "",
     step: "review",
@@ -39,6 +42,11 @@ export const useCheckoutStore = create<CheckoutState>()(
     setName: (name) =>
       set((state) => {
         state.name = name;
+      }),
+
+    setEmail: (email) =>
+      set((state) => {
+        state.email = email;
       }),
 
     setPhone: (phone) =>

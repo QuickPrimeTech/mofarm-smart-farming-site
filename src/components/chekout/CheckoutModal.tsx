@@ -51,7 +51,7 @@ const CheckoutModal = () => {
             {step === "done" && "Order Confirmed!"}
           </DialogTitle>
         </DialogHeader>
-        <ScrollArea className="h-[calc(90vh-120px)] px-4">
+        <ScrollArea className="h-[calc(90vh-120px)] px-4 border-t">
           <div className="py-4">
             {step === "review" && <Review />}
 

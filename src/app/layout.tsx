@@ -6,10 +6,10 @@ import Navbar from "@/components/Navbar";
 import CartDrawer from "@/components/CartDrawer";
 import CheckoutModal from "@/components/chekout/CheckoutModal";
 import Footer from "@/components/Footer"; // Import it here
-import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/sonner";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const montserrat = Montserrat({
@@ -41,7 +41,7 @@ export default function RootLayout({
           <Navbar />
           {/* Use a flex-col wrapper to push footer to bottom on short pages */}
           <div className="flex flex-col min-h-screen">
-            <main className="flex-grow">{children}</main>
+            <main className="grow">{children}</main>
             <Footer />
           </div>
 

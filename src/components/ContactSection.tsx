@@ -36,7 +36,7 @@ const ContactSection = () => {
   const handleSubmit = async (data: ContactFormData) => {
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    toast.success("Message sent! We'll get back to you soon.");
+    toast.success(`Message sent to ${data.email}! We'll get back to you soon.`);
     form.reset();
   };
 

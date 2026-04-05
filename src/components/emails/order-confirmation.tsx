@@ -315,10 +315,6 @@ const header = {
   textAlign: "center" as const,
 };
 
-const logo = {
-  margin: "0 auto",
-};
-
 const heroSection = {
   padding: "0 32px 20px",
   textAlign: "center" as const,

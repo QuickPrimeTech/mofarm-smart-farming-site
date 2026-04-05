@@ -1,18 +1,18 @@
 // components/ProductCard.tsx
 "use client";
-
 import { Plus, Check } from "lucide-react";
 import { Product } from "@/types/product";
-import { useCart } from "@/context/CartContext";
 import { useState } from "react";
-import Image from "next/image";
+import { Image } from "./ui/image";
+import { useCartStore } from "@/stores/cart-store";
+import { useShallow } from "zustand/shallow";
 
 const ProductCard = ({ product }: { product: Product }) => {
-  const { addToCart } = useCart();
+  const addToCart = useCartStore(useShallow((state) => state.addToCart));
   const [added, setAdded] = useState(false);
 
   const handleAdd = () => {
-    addToCart(product);
+    addToCart(product.id);
     setAdded(true);
     setTimeout(() => setAdded(false), 1200);
   };

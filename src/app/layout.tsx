@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
 import { Inter, Montserrat, Geist } from "next/font/google";
 import "./globals.css";
-import { CartProvider } from "@/context/CartContext";
-import Navbar from "@/components/Navbar";
-import CartDrawer from "@/components/CartDrawer";
-import CheckoutModal from "@/components/CheckoutModal";
+import Navbar from "@/components/navbar";
+import CartSheet from "@/components/chekout/cart-sheet";
 import Footer from "@/components/Footer"; // Import it here
-import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const montserrat = Montserrat({
@@ -29,23 +28,30 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={cn("scroll-smooth", "font-sans", geist.variable)}>
+    <html
+      lang="en"
+      className={cn("scroll-smooth", "font-sans", geist.variable)}
+      suppressHydrationWarning
+    >
       <body
         className={`${inter.variable} ${montserrat.variable} font-sans antialiased`}
       >
-        <CartProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
           <Toaster position="top-center" richColors />
           <Navbar />
-
           {/* Use a flex-col wrapper to push footer to bottom on short pages */}
           <div className="flex flex-col min-h-screen">
-            <main className="flex-grow">{children}</main>
+            <main className="grow">{children}</main>
             <Footer />
           </div>
 
-          <CartDrawer />
-          <CheckoutModal />
-        </CartProvider>
+          <CartSheet />
+        </ThemeProvider>
       </body>
     </html>
   );

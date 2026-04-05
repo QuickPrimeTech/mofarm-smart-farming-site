@@ -1,146 +1,218 @@
+// @/components/navbar.tsx
 "use client";
-
-import { ShoppingCart, Menu, X, Phone, MapPin } from "lucide-react";
-import { useCart } from "@/context/CartContext";
+import { ShoppingCart, Menu, Phone, MapPin } from "lucide-react";
 import { useState, useEffect } from "react";
-import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+  SheetHeader,
+  SheetDescription,
+} from "@/components/ui/sheet";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { MofarmLogo } from "./logo";
+import { Separator } from "./ui/separator";
+import { useCartStore } from "@/stores/cart-store";
+import { useShallow } from "zustand/shallow";
+
+const navLinks = [
+  { id: "products", label: "Products" },
+  { id: "contact", label: "Contact" },
+  { id: "faq", label: "FAQs" },
+];
+
 const Navbar = () => {
-  const { totalItems, setIsCartOpen } = useCart();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const { totalItems, setIsCartOpen } = useCartStore(
+    useShallow((state) => ({
+      totalItems: state.totalItems,
+      setIsCartOpen: state.setIsCartOpen,
+    })),
+  );
+
   const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => setScrolled(window.scrollY > 70);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const scrollTo = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-      setMobileOpen(false);
-    }
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setMobileOpen(false);
   };
 
   return (
     <>
       {/* Top bar */}
-      <div
-        className={`fixed top-0 left-0 right-0 z-[60] transition-all duration-300 ${scrolled ? "h-0 overflow-hidden opacity-0" : "opacity-100"}`}
-      >
-        <div className="bg-primary/80 backdrop-blur-sm">
-          <div className="container mx-auto flex items-center justify-between px-4 py-2 text-sm text-primary-foreground">
+      <div className={`transition-all duration-300 overflow-hidden`}>
+        <div className="bg-primary text-primary-foreground">
+          <div className="container mx-auto flex items-center justify-between px-4 py-2 text-xs sm:text-sm">
             <div className="flex items-center gap-4">
-              <span className="flex items-center gap-1">
-                <Phone className="h-3 w-3" /> +254 703 946365
+              <span className="flex items-center gap-1.5">
+                <Phone className="h-3 w-3" />
+                +254 703 946365
               </span>
-              <span className="hidden sm:flex items-center gap-1">
-                <MapPin className="h-3 w-3" /> Nyeri, Kenya
+              <span className="hidden sm:flex items-center gap-1.5">
+                <MapPin className="h-3 w-3" />
+                Nyeri, Kenya
               </span>
             </div>
-            <span className="text-xs">Delivery: Mon, Wed & Sat</span>
+            <span className="font-medium text-xs tracking-wide">
+              Mon, Wed & Sat Delivery
+            </span>
           </div>
         </div>
       </div>
 
       {/* Main nav */}
       <nav
-        className={`fixed left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "top-0 bg-white/95 backdrop-blur-md shadow-sm border-b" : "top-[36px] bg-transparent"}`}
+        className={cn(
+          `fixed top-10 z-50 transition-all duration-300 w-full`,
+          scrolled && "bg-background/80 backdrop-blur-sm shadow-sm top-0",
+        )}
       >
         <div className="container mx-auto flex items-center justify-between px-4 py-3">
-          <button
+          {/* Logo */}
+          <Button
+            variant="ghost"
             onClick={() => scrollTo("hero")}
-            className={`font-heading text-xl font-bold transition-colors ${scrolled ? "text-primary" : "text-white"}`}
+            className="gap-3 hover:bg-transparent px-0 group"
+            asChild
           >
-            <div className="flex justify-between items-center gap-2">
-              {" "}
-              <Image
-                src="/mofarmlogo.jpeg"
-                width={50}
-                height={50}
-                alt="Mofarm Logo"
-                className=" rounded-full object-cover"
-              />
-              <span className={scrolled ? "text-slate-600" : "text-white"}>
-                Mofarm Smart Farming
-              </span>
-            </div>
-          </button>
+            <Link href="/">
+              <MofarmLogo className="size-12" />
+              <div className="flex flex-col items-start leading-none gap-0.5">
+                <span
+                  className={`font-bold text-base tracking-tight transition-colors duration-300 ${
+                    scrolled ? "text-foreground" : "text-white"
+                  }`}
+                >
+                  Mofarm
+                </span>
+                <span
+                  className={`text-[10px] font-medium tracking-widest uppercase transition-colors duration-300 ${
+                    scrolled ? "text-muted-foreground" : "text-white/60"
+                  }`}
+                >
+                  Smart Farming
+                </span>
+              </div>
+            </Link>
+          </Button>
 
-          <div
-            className={`hidden md:flex items-center gap-6 text-sm font-medium transition-colors ${scrolled ? "text-slate-900" : "text-white"}`}
-          >
-            <button
-              onClick={() => scrollTo("products")}
-              className="hover:text-primary transition-colors"
-            >
-              Products
-            </button>
-            <button
-              onClick={() => scrollTo("contact")}
-              className="hover:text-primary transition-colors"
-            >
-              Contact
-            </button>
-            <button
-              onClick={() => scrollTo("faq")}
-              className="hover:text-primary transition-colors"
-            >
-              FAQs
-            </button>
+          {/* Desktop nav links */}
+          <div className="hidden md:flex items-center gap-1">
+            {navLinks.map(({ id, label }) => (
+              <Button
+                key={id}
+                variant="ghost"
+                size="sm"
+                onClick={() => scrollTo(id)}
+                className={`rounded-full text-sm font-medium transition-colors duration-200 ${
+                  scrolled
+                    ? "text-foreground hover:text-primary hover:bg-primary/10"
+                    : "text-white/80 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                {label}
+              </Button>
+            ))}
           </div>
 
-          <div className="flex items-center gap-3">
-            <button
+          {/* Actions */}
+          <div className="flex items-center gap-2">
+            {/* Cart */}
+            <Button
+              size="icon-lg"
+              className="relative rounded-full"
               onClick={() => setIsCartOpen(true)}
-              className="relative rounded-full bg-primary p-2 text-primary-foreground transition hover:scale-105 active:scale-95 shadow-md"
-              aria-label="Open Cart"
             >
-              <ShoppingCart className="h-5 w-5" />
+              <ShoppingCart className="size-5" />
               {totalItems > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white ring-2 ring-white">
+                <Badge className="absolute -right-1.5 -top-1.5 size-4">
                   {totalItems}
-                </span>
+                </Badge>
               )}
-            </button>
-            <button
-              className={`md:hidden transition-colors ${scrolled ? "text-slate-900" : "text-white"}`}
-              onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label="Toggle Menu"
-            >
-              {mobileOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </button>
+            </Button>
+
+            {/* Mobile menu */}
+            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+              <SheetTrigger asChild className="md:hidden">
+                <Button
+                  variant="ghost"
+                  size="icon-lg"
+                  className={cn(`text-white`, scrolled && "text-foreground")}
+                >
+                  <Menu />
+                </Button>
+              </SheetTrigger>
+
+              <SheetContent side="right" className="w-3/4 sm:w-1/2 lg:w-1/4">
+                <SheetHeader>
+                  <SheetTitle className="flex items-center gap-2.5 text-base font-semibold">
+                    <MofarmLogo className="size-8" />
+                    Mofarm Smart Farming
+                  </SheetTitle>
+                  <SheetDescription className="sr-only">
+                    Mofarm Smart Farming sidebar
+                  </SheetDescription>
+                </SheetHeader>
+
+                <div className="flex flex-col h-full justify-between p-6">
+                  {/* Nav links */}
+                  <nav className="flex flex-col gap-1 mt-6">
+                    {navLinks.map(({ id, label }) => (
+                      <>
+                        <Button
+                          key={id}
+                          variant="ghost"
+                          className="justify-start text-base font-normal h-11 rounded-lg text-foreground hover:text-primary hover:bg-primary/10"
+                          onClick={() => scrollTo(id)}
+                        >
+                          {label}
+                        </Button>
+                        <Separator key={id} />
+                      </>
+                    ))}
+                  </nav>
+
+                  {/* Contact info */}
+                  <div className="bg-muted rounded-xl p-4 space-y-2.5">
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
+                      Contact & Delivery
+                    </p>
+                    <div className="flex items-center gap-2.5 text-sm text-foreground">
+                      <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <Phone className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      +254 703 946365
+                    </div>
+                    <div className="flex items-center gap-2.5 text-sm text-foreground">
+                      <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <MapPin className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      Nyeri, Kenya
+                    </div>
+                    <div className="pt-1">
+                      <Badge
+                        variant="secondary"
+                        className="text-xs font-medium"
+                      >
+                        Mon, Wed & Sat Delivery
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
-
-        {/* Mobile menu */}
-        {mobileOpen && (
-          <div className="md:hidden border-t bg-white px-4 py-4 flex flex-col gap-4 text-sm font-bold shadow-xl animate-in slide-in-from-top duration-300">
-            <button
-              onClick={() => scrollTo("products")}
-              className="text-left text-slate-900 hover:text-primary py-2 border-b border-slate-50"
-            >
-              Products
-            </button>
-            <button
-              onClick={() => scrollTo("contact")}
-              className="text-left text-slate-900 hover:text-primary py-2 border-b border-slate-50"
-            >
-              Contact
-            </button>
-            <button
-              onClick={() => scrollTo("faq")}
-              className="text-left text-slate-900 hover:text-primary py-2 border-b border-slate-50"
-            >
-              FAQs
-            </button>
-          </div>
-        )}
       </nav>
     </>
   );

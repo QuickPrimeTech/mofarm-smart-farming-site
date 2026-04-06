@@ -90,8 +90,7 @@ export async function POST(request: Request) {
               id: row.product_id,
               name: row.product_name,
               price: parseFloat(row.product_price),
-              image:
-                "https://res.cloudinary.com/meshack-kipkemoi/image/upload/v1774801077/hero-fruits_zs58oz.jpg",
+              image: row.product_image,
             },
             quantity: row.quantity,
           }));

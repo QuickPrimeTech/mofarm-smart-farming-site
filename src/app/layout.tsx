@@ -7,6 +7,9 @@ import Footer from "@/components/Footer"; // Import it here
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import Chatbot from "@/components/Chatbot";
+
+
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -49,7 +52,7 @@ export default function RootLayout({
             <main className="grow">{children}</main>
             <Footer />
           </div>
-
+         <Chatbot />
           <CartSheet />
         </ThemeProvider>
       </body>

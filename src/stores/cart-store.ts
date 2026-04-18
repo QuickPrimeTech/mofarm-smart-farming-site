@@ -140,7 +140,20 @@ export const useCartStore = create<CartState>()(
         },
 
         setDiscountedProducts: (products) => {
-          set({ discounted_products: products });
+          const now = new Date();
+
+          const validProducts = products.filter((offer) => {
+            const validFrom = new Date(offer.valid_from);
+            const validTo = new Date(offer.valid_to);
+
+            return validFrom <= now && validTo >= now;
+          });
+
+          set({ discounted_products: validProducts });
+
+          // 🔥 recompute totals because discounts changed
+          const { items, products: allProducts } = get();
+          set(computeDerivedState(items, allProducts, validProducts));
         },
 
         setIsCartOpen: (open) => set({ isCartOpen: open }),

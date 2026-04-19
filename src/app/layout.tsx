@@ -12,6 +12,8 @@ import axios from "axios";
 import { Product } from "@/types/product";
 import { CartSync } from "@/components/cart-sync";
 import NextTopLoader from "nextjs-toploader";
+import Chatbot from "@/components/Chatbot";
+
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -61,6 +63,7 @@ export default async function RootLayout({
             <main className="grow">{children}</main>
             <Footer />
           </div>
+         <Chatbot />
           <CartSheet />
         </ThemeProvider>
       </body>

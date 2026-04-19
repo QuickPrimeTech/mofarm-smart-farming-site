@@ -7,6 +7,10 @@ import Footer from "@/components/Footer"; // Import it here
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { createSuperClient } from "@/lib/supabase/admin";
+import axios from "axios";
+import { Product } from "@/types/product";
+import { CartSync } from "@/components/cart-sync";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -22,11 +26,16 @@ export const metadata: Metadata = {
     "Direct from farm to your business. Quality fruits, vegetables and grains in Nyeri, Kenya.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [{ data: products }, { data: specialOffers }] = await Promise.all([
+    axios.get<Product[]>(`${process.env.NEXT_PUBLIC_SITE_URL}/api/products`),
+    (await createSuperClient()).rpc("get_active_special_offers"),
+  ]);
+
   return (
     <html
       lang="en"
@@ -42,6 +51,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <CartSync specialOffers={specialOffers} products={products} />
           <Toaster position="top-center" richColors />
           <Navbar />
           {/* Use a flex-col wrapper to push footer to bottom on short pages */}

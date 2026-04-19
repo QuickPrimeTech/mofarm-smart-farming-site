@@ -13,7 +13,7 @@ export type CartItem = {
 // Enriched cart item with full product data
 export type EnrichedCartItem = CartItem & { product: Product };
 
-interface CartState {
+type CartState = {
   // Cart items (minimal storage)
   items: CartItem[];
   discounted_products: ProductOffer[];
@@ -30,7 +30,7 @@ interface CartState {
   totalItems: number;
 
   // Actions
-  addToCart: (productId: string) => void;
+  addToCart: (productId: string, quantity?: number) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
@@ -41,7 +41,8 @@ interface CartState {
   getProduct: (productId: string) => Product | undefined;
   isInCart: (productId: string) => boolean;
   getItemQuantity: (productId: string) => number;
-}
+  syncDerivedState: () => void;
+};
 
 // Helper to compute derived state
 const computeDerivedState = (
@@ -49,8 +50,6 @@ const computeDerivedState = (
   products: Product[],
   discountedProducts: ProductOffer[],
 ) => {
-  // const discountedProducts = useCartStore.getState().discounted_products
-
   const cartItems = items
     .map((item) => ({
       ...item,
@@ -86,7 +85,14 @@ export const useCartStore = create<CartState>()(
         totalItems: 0,
 
         // Actions (all update derived state after mutation)
-        addToCart: (productId) => {
+        addToCart: (productId, quantity = 1) => {
+          const productExists = get().products.some((p) => p.id === productId);
+
+          if (!productExists) {
+            console.warn("Invalid productId:", productId);
+            return; // stop here if invalid
+          }
+
           set((state) => {
             const existingItem = state.items.find(
               (item) => item.productId === productId,
@@ -94,13 +100,12 @@ export const useCartStore = create<CartState>()(
             if (existingItem) {
               existingItem.quantity += 1;
             } else {
-              state.items.push({ productId, quantity: 1 });
+              state.items.push({ productId, quantity });
             }
           });
           useCheckoutStore.getState().setStep("cart");
           // Recompute derived state
-          const { items, products, discounted_products } = get();
-          set(computeDerivedState(items, products, discounted_products));
+          get().syncDerivedState();
         },
 
         removeFromCart: (productId) => {
@@ -110,11 +115,17 @@ export const useCartStore = create<CartState>()(
             );
             if (index !== -1) state.items.splice(index, 1);
           });
-          const { items, products, discounted_products } = get();
-          set(computeDerivedState(items, products, discounted_products));
+          get().syncDerivedState();
         },
 
         updateQuantity: (productId, quantity) => {
+          const productExists = get().products.some((p) => p.id === productId);
+
+          if (!productExists) {
+            console.warn("Invalid productId:", productId);
+            return; // stop here if invalid
+          }
+
           if (quantity <= 0) {
             get().removeFromCart(productId);
             return;
@@ -125,8 +136,7 @@ export const useCartStore = create<CartState>()(
             );
             if (item) item.quantity = quantity;
           });
-          const { items, products, discounted_products } = get();
-          set(computeDerivedState(items, products, discounted_products));
+          get().syncDerivedState();
         },
 
         clearCart: () => {
@@ -135,8 +145,7 @@ export const useCartStore = create<CartState>()(
 
         setProducts: (products) => {
           set({ products });
-          const { items, discounted_products } = get();
-          set(computeDerivedState(items, products, discounted_products));
+          get().syncDerivedState();
         },
 
         setDiscountedProducts: (products) => {
@@ -152,8 +161,7 @@ export const useCartStore = create<CartState>()(
           set({ discounted_products: validProducts });
 
           // 🔥 recompute totals because discounts changed
-          const { items, products: allProducts } = get();
-          set(computeDerivedState(items, allProducts, validProducts));
+          get().syncDerivedState();
         },
 
         setIsCartOpen: (open) => set({ isCartOpen: open }),
@@ -165,24 +173,28 @@ export const useCartStore = create<CartState>()(
         isInCart: (productId) =>
           get().items.some((item) => item.productId === productId),
 
+        syncDerivedState: () => {
+          const { items, products, discounted_products } = get();
+          // Because you are using immer, passing an object to set() will merge it
+          set(computeDerivedState(items, products, discounted_products));
+        },
+
         getItemQuantity: (productId) =>
           get().items.find((item) => item.productId === productId)?.quantity ||
           0,
       }),
+
       {
         name: "mofarm_cart",
         partialize: (state) => ({
           items: state.items,
+          products: state.products,
           // Don't persist derived state - it will be recomputed on load
         }),
         onRehydrateStorage: () => (state) => {
           // Recompute derived state after persistence rehydrates
           if (state) {
-            const { items, products, discounted_products } = state;
-            return {
-              ...state,
-              ...computeDerivedState(items, products, discounted_products),
-            };
+            state.syncDerivedState();
           }
         },
       },

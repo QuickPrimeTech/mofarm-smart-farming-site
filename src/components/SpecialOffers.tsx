@@ -129,7 +129,9 @@ function OfferCard({ offer, index }: { offer: ProductOffer; index: number }) {
 }
 
 /* ─── main component ───────────────────────────────────────── */
-const SpecialOffers = ({ offers }: { offers: ProductOffer[] }) => {
+const SpecialOffers = () => {
+  const offers = useCartStore((state) => state.discounted_products);
+
   if (!offers.length) return null;
   const setDiscountedProducts = useCartStore(
     (state) => state.setDiscountedProducts,
@@ -140,7 +142,7 @@ const SpecialOffers = ({ offers }: { offers: ProductOffer[] }) => {
   }, [setDiscountedProducts]);
 
   return (
-    <section className="w-full py-10 px-4 md:px-8">
+    <section className="w-full py-10 px-4 md:px-8" id="offers">
       {/* Header */}
       <div className="mb-8 flex items-end justify-between">
         <div>

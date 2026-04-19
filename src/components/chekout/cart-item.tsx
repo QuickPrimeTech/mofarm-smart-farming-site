@@ -38,7 +38,7 @@ export const CartItem = ({ item }: { item: EnrichedCartItem }) => {
     <>
       <div
         key={item.productId}
-        className="flex gap-4 rounded-xl border bg-muted/30"
+        className="w-full flex gap-4 rounded-xl border bg-muted/30"
       >
         <div className="relative min-h-20  aspect-5/4 shrink-0 rounded-lg bg-muted">
           {item.product.image_url ? (

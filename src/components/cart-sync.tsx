@@ -31,7 +31,7 @@ export function CartSync({
   const setDiscountedProducts = useCartStore(
     (state) => state.setDiscountedProducts,
   );
-  const items = useCartStore((state) => state.items);
+  const storeProducts = useCartStore((state) => state.items);
   const addToCart = useCartStore((state) => state.addToCart);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
 
@@ -61,13 +61,15 @@ export function CartSync({
       setPaymentPhone(phone);
     }
     const items = parseJSON(searchItems) as { id: string; quantity: number }[];
-
+    console.log("items ------>", items);
     if (items) {
       items.map((item) => {
-        if (items.some((product) => product.id === item.id)) {
+        if (storeProducts.some((product) => product.productId === item.id)) {
+          console.log("updating the cart item");
           updateQuantity(item.id, item.quantity);
           return;
         }
+        console.log("adding for the first time");
         addToCart(item.id, item.quantity);
       });
     }

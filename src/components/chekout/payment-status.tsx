@@ -12,6 +12,19 @@ import { toast } from "sonner";
 import { useShallow } from "zustand/shallow";
 import { ScrollArea, ScrollBar } from "@ui/scroll-area";
 import { usePaymentHandler } from "@/hooks/use-payment";
+import { cn } from "@/lib/utils";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { OrderDetails } from "./order-details";
 
 const statusConfig: Record<
   PaymentStatusType,
@@ -48,9 +61,20 @@ const statusConfig: Record<
     textColor: "text-destructive",
     bgColor: "bg-red-50/50",
   },
+  cancelled: {
+    icon: <XCircle className="size-12 mx-auto" />,
+    title: "Payment Cancelled",
+    description: "Please try again or use a different number",
+    iconColor: "text-destructive",
+    textColor: "text-destructive",
+    bgColor: "bg-red-50/50",
+  },
 };
 
-export function PaymentStatus() {
+export function PaymentStatus({
+  className,
+  ...props
+}: React.ComponentProps<typeof ScrollArea>) {
   const { handlePayment, isProcessing } = usePaymentHandler();
   const [isListening, setIsListening] = useState(false);
 
@@ -58,10 +82,6 @@ export function PaymentStatus() {
     paymentStatus,
     setPaymentStatus,
     setStep,
-    name,
-    phone,
-    email,
-    address,
     transactionId,
     payment_phone,
   } = useCheckoutStore(
@@ -69,22 +89,10 @@ export function PaymentStatus() {
       paymentStatus: state.paymentStatus,
       setPaymentStatus: state.setPaymentStatus,
       setStep: state.setStep,
-      name: state.name,
-      phone: state.phone,
-      email: state.email,
-      address: state.address,
       transactionId: state.transactionId,
       payment_phone: state.payment_phone,
     })),
   );
-
-  const orderDetails = [
-    { label: "Customer", value: name },
-    { label: "Contact Phone", value: phone },
-    { label: "Payment Phone", value: payment_phone },
-    { label: "Email", value: email },
-    { label: "Delivery", value: address },
-  ];
 
   // Real-time subscription effect (keep your existing useEffect)
   useEffect(() => {
@@ -164,8 +172,12 @@ export function PaymentStatus() {
     setStep("payment");
   };
 
+  const cancelPayment = () => {
+    setPaymentStatus("cancelled");
+  };
+
   return (
-    <ScrollArea className="h-0 flex-1">
+    <ScrollArea className={cn("h-0 flex-1", className)} {...props}>
       <div className="space-y-6 py-6 px-4">
         {/* Connection Status */}
         {isListening && paymentStatus === "pending" && (
@@ -192,16 +204,60 @@ export function PaymentStatus() {
                 ? `Check your phone ${payment_phone} for STK push`
                 : currentStatus.description}
             </p>
+            {paymentStatus === "pending" && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant={"destructive"}
+                    size={"xl"}
+                    className="w-full mt-6"
+                  >
+                    Cancel Payment
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      your account from our servers.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter className="flex-row">
+                    <AlertDialogCancel className="flex-1">
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      className="flex-2"
+                      variant={"destructive"}
+                      onClick={cancelPayment}
+                    >
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
           </div>
 
           {/* Retry Button - Only show on failed */}
-          {paymentStatus === "failed" && (
-            <div className="pt-4 space-y-2">
+          {(paymentStatus === "failed" || paymentStatus === "cancelled") && (
+            <div className="flex flex-col-reverse sm:flex-row pt-4 gap-2">
+              <Button
+                variant="outline"
+                onClick={handleEditPayment}
+                className="w-full sm:flex-1"
+                size="xl"
+              >
+                Change Payment Number
+              </Button>
               <Button
                 onClick={handleRetry}
                 disabled={isProcessing}
-                className="w-full"
-                size="lg"
+                className="w-full sm:flex-2"
+                size="xl"
               >
                 {isProcessing ? (
                   <>
@@ -215,32 +271,12 @@ export function PaymentStatus() {
                   </>
                 )}
               </Button>
-              <Button
-                variant="outline"
-                onClick={handleEditPayment}
-                className="w-full"
-                size="sm"
-              >
-                Change Payment Number
-              </Button>
             </div>
           )}
         </div>
 
         {/* Order Summary */}
-        <div className="bg-muted/50 p-4 rounded-lg space-y-3 text-sm border">
-          <h4 className="font-semibold text-foreground">Order Details</h4>
-          <div className="space-y-2">
-            {orderDetails.map(({ label, value }) => (
-              <div key={label} className="flex justify-between">
-                <span className="text-muted-foreground">{label}:</span>
-                <span className="font-medium text-foreground">
-                  {value || "N/A"}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <OrderDetails />
 
         {/* Help Text */}
         {paymentStatus === "pending" && (

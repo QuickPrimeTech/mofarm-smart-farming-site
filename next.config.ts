@@ -15,6 +15,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  allowedDevOrigins: ["lz62klsuhtff7kjv2ytqb3e74u.srv.us"],
 };
 
 export default nextConfig;

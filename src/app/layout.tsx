@@ -11,6 +11,7 @@ import { createSuperClient } from "@/lib/supabase/admin";
 import axios from "axios";
 import { Product } from "@/types/product";
 import { CartSync } from "@/components/cart-sync";
+import NextTopLoader from "nextjs-toploader";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -51,6 +52,7 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <NextTopLoader showSpinner={false} />
           <CartSync specialOffers={specialOffers} products={products} />
           <Toaster position="top-center" richColors />
           <Navbar />
@@ -59,7 +61,6 @@ export default async function RootLayout({
             <main className="grow">{children}</main>
             <Footer />
           </div>
-
           <CartSheet />
         </ThemeProvider>
       </body>

@@ -1,7 +1,7 @@
 // @/components/navbar.tsx
 "use client";
 import { ShoppingCart, Menu, Phone, MapPin } from "lucide-react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -10,6 +10,7 @@ import {
   SheetTitle,
   SheetHeader,
   SheetDescription,
+  SheetClose,
 } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -152,7 +153,11 @@ const Navbar = () => {
                 <Button
                   variant="ghost"
                   size="icon-lg"
-                  className={cn(`text-white`, scrolled && "text-foreground")}
+                  className={cn(
+                    `text-white`,
+                    scrolled && "text-foreground",
+                    !homepage && !scrolled && "text-foreground",
+                  )}
                 >
                   <Menu />
                 </Button>
@@ -173,17 +178,18 @@ const Navbar = () => {
                   {/* Nav links */}
                   <nav className="flex flex-col gap-1 mt-6">
                     {navLinks.map(({ id, label, href }) => (
-                      <>
-                        <Button
-                          key={id}
-                          variant="ghost"
-                          className="justify-start text-base font-normal h-11 rounded-lg text-foreground hover:text-primary hover:bg-primary/10"
-                          asChild
-                        >
-                          <Link href={href}>{label}</Link>
-                        </Button>
+                      <React.Fragment key={id}>
+                        <SheetClose asChild>
+                          <Button
+                            variant="ghost"
+                            className="justify-start text-base font-normal h-11 rounded-lg text-foreground hover:text-primary hover:bg-primary/10"
+                            asChild
+                          >
+                            <Link href={href}>{label}</Link>
+                          </Button>
+                        </SheetClose>
                         <Separator key={id} />
-                      </>
+                      </React.Fragment>
                     ))}
                   </nav>
 

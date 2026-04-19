@@ -7,8 +7,20 @@ import { motion } from "framer-motion";
 import { ScrollArea, ScrollBar } from "@ui/scroll-area";
 import { OrderSummary } from "./order-summary";
 import { useCheckoutStore } from "@/stores/checkout-store";
+import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import { OrderDetails } from "./order-details";
 
-export const CartSuccess = () => {
+export const CartSuccess = ({
+  className,
+  showOrderSummary = true,
+  variant = "sheet",
+  ...props
+}: React.ComponentProps<typeof ScrollArea> & {
+  showOrderSummary?: boolean;
+  variant?: "sheet" | "page";
+}) => {
+  const router = useRouter();
   const setIsCartOpen = useCartStore((state) => state.setIsCartOpen);
   const clearCart = useCartStore((state) => state.clearCart);
   const setStep = useCheckoutStore((state) => state.setStep);
@@ -19,10 +31,11 @@ export const CartSuccess = () => {
     setStep("cart"); // Reset to cart step for next order
     setTransactionId(null); // Clear transaction ID
     setIsCartOpen(false);
+    router.push("/");
   };
 
   return (
-    <ScrollArea className="h-0 flex-1">
+    <ScrollArea className={cn("h-0 flex-1", className)} {...props}>
       <div className="flex flex-col h-full bg-linear-to-b from-emerald-50/50 to-background">
         <div className="px-4">
           <div className="relative px-6 pt-8 pb-6 text-center overflow-hidden">
@@ -35,9 +48,8 @@ export const CartSuccess = () => {
               Your payment has been received and your order is being processed.
             </p>
           </div>
-
-          <OrderSummary />
-
+          {showOrderSummary && <OrderSummary />}
+          <OrderDetails />
           {/* What's Next */}
           <div className="space-y-3 my-8">
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1">

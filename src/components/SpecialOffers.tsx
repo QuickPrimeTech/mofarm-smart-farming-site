@@ -132,7 +132,6 @@ function OfferCard({ offer, index }: { offer: ProductOffer; index: number }) {
 const SpecialOffers = () => {
   const offers = useCartStore((state) => state.discounted_products);
 
-  if (!offers.length) return null;
   const setDiscountedProducts = useCartStore(
     (state) => state.setDiscountedProducts,
   );
@@ -140,6 +139,8 @@ const SpecialOffers = () => {
   useEffect(() => {
     setDiscountedProducts(offers);
   }, [setDiscountedProducts]);
+
+  if (!offers.length) return null;
 
   return (
     <section className="w-full py-10 px-4 md:px-8" id="offers">

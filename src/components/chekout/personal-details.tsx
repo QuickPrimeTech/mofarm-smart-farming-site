@@ -18,8 +18,15 @@ import { ScrollArea, ScrollBar } from "@ui/scroll-area";
 import { OrderSummary } from "./order-summary";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useShallow } from "zustand/shallow";
+import { cn } from "@/lib/utils";
 
-export const PersonalDetails = () => {
+export const PersonalDetails = ({
+  className,
+  showOrderSummary = true,
+  ...props
+}: React.ComponentProps<typeof ScrollArea> & {
+  showOrderSummary?: boolean;
+}) => {
   // Get store state and actions
   const name = useCheckoutStore((state) => state.name);
   const email = useCheckoutStore((state) => state.email);
@@ -61,11 +68,14 @@ export const PersonalDetails = () => {
   };
 
   return (
-    <ScrollArea className="h-0 flex-1">
+    <ScrollArea className={cn("h-0 flex-1", className)} {...props}>
       <div className="pt-3">
-        <div className="px-4">
-          <OrderSummary />
-        </div>
+        {showOrderSummary && (
+          <div className="px-4">
+            <OrderSummary />
+          </div>
+        )}
+
         <form
           onSubmit={form.handleSubmit(handleProceedToPay)}
           className="space-y-3"

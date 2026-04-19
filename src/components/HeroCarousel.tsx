@@ -80,10 +80,10 @@ const HeroCarousel = () => {
                 Shop Now <ChevronRight className="h-4 w-4" />
               </Link>
               <Link
-                href="#contact"
+                href="/#contact"
                 className="inline-flex items-center rounded-lg border border-white/50 px-8 py-3 font-heading font-bold text-white transition hover:bg-white/10"
               >
-                Contact Us
+                Contact
               </Link>
             </div>
           </div>

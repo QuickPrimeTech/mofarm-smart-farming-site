@@ -38,9 +38,9 @@ export const CartItem = ({ item }: { item: EnrichedCartItem }) => {
     <>
       <div
         key={item.productId}
-        className="flex gap-4 rounded-xl border bg-muted/30"
+        className="w-full h-fit flex gap-4 rounded-xl border bg-muted/30 overflow-hidden"
       >
-        <div className="relative min-h-20  aspect-5/4 shrink-0 rounded-lg bg-muted">
+        <div className="relative min-h-20 aspect-5/4 shrink-0 rounded-lg bg-muted">
           {item.product.image_url ? (
             <Image
               src={item.product.image_url}
@@ -61,7 +61,7 @@ export const CartItem = ({ item }: { item: EnrichedCartItem }) => {
         </div>
 
         <div className="flex-1 min-w-0 flex flex-col justify-between p-3">
-          <div className="flex justify-between">
+          <div className="flex flex-wrap gap-1 justify-between">
             <div>
               <h4 className="font-bold text-sm text-foreground truncate">
                 {item.product.name}
@@ -92,7 +92,7 @@ export const CartItem = ({ item }: { item: EnrichedCartItem }) => {
               <Trash2 />
             </Button>
           </div>
-          <div className="flex justify-between items-end">
+          <div className="flex flex-wrap gap-1 justify-between items-center">
             <div className="flex items-center gap-2 mt-2">
               <Button
                 variant="outline"
@@ -118,7 +118,7 @@ export const CartItem = ({ item }: { item: EnrichedCartItem }) => {
                 <Plus />
               </Button>
             </div>
-            <span className="text-sm font-extrabold text-primary">
+            <span className="text-xs text-nowrap font-extrabold text-primary">
               KSh {totalPrice.toLocaleString()}
             </span>
           </div>

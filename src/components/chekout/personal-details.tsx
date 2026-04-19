@@ -18,8 +18,17 @@ import { ScrollArea, ScrollBar } from "@ui/scroll-area";
 import { OrderSummary } from "./order-summary";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useShallow } from "zustand/shallow";
+import { cn } from "@/lib/utils";
 
-export const PersonalDetails = () => {
+export const PersonalDetails = ({
+  className,
+  showOrderSummary = true,
+  variant = "sheet",
+  ...props
+}: React.ComponentProps<typeof ScrollArea> & {
+  showOrderSummary?: boolean;
+  variant?: "sheet" | "page";
+}) => {
   // Get store state and actions
   const name = useCheckoutStore((state) => state.name);
   const email = useCheckoutStore((state) => state.email);
@@ -61,11 +70,14 @@ export const PersonalDetails = () => {
   };
 
   return (
-    <ScrollArea className="h-0 flex-1">
+    <ScrollArea className={cn("h-0 flex-1", className)} {...props}>
       <div className="pt-3">
-        <div className="px-4">
-          <OrderSummary />
-        </div>
+        {showOrderSummary && (
+          <div className="px-4">
+            <OrderSummary />
+          </div>
+        )}
+
         <form
           onSubmit={form.handleSubmit(handleProceedToPay)}
           className="space-y-3"
@@ -131,6 +143,9 @@ export const PersonalDetails = () => {
                       aria-invalid={fieldState.invalid}
                       autoComplete="email"
                     />
+                    <FieldDescription>
+                      This email will receive your order confirmation.
+                    </FieldDescription>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -161,15 +176,17 @@ export const PersonalDetails = () => {
             </FieldGroup>
           </div>
           <div className="flex gap-2 pt-3 sticky bottom-0 bg-background/80 backdrop-blur-sm border-t p-4 rounded-t-lg">
-            <Button
-              type="button"
-              size="xl"
-              variant={"outline"}
-              onClick={() => setStep("cart")}
-              className="flex-1"
-            >
-              <ArrowLeft /> Back
-            </Button>
+            {variant === "sheet" && (
+              <Button
+                type="button"
+                size="xl"
+                variant={"outline"}
+                onClick={() => setStep("cart")}
+                className="flex-1"
+              >
+                <ArrowLeft /> Back
+              </Button>
+            )}
             <Button type="submit" size="xl" className="flex-3">
               Proceed to Pay <ArrowRight />
             </Button>

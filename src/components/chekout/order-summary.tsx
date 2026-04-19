@@ -1,30 +1,55 @@
+// @/components/checkout/order-summary.tsx
+
+"use client";
+
 import { useCartStore } from "@/stores/cart-store";
 import { ScrollArea, ScrollBar } from "@ui/scroll-area";
-import { useShallow } from "zustand/shallow";
+import { CartItem } from "./cart-item";
+import { cn } from "@/lib/utils";
 
-export const OrderSummary = () => {
-  const { cartItems, totalPrice } = useCartStore(
-    useShallow((state) => ({
-      cartItems: state.cartItems,
-      totalPrice: state.totalPrice,
-    })),
-  );
+type OrderSummaryProps = {
+  variant?: "default" | "fancy";
+};
+export const OrderSummary = ({
+  variant = "default",
+  className,
+  ...props
+}: OrderSummaryProps & React.ComponentProps<"div">) => {
+  const cartItems = useCartStore((state) => state.cartItems);
+  const totalPrice = useCartStore((state) => state.totalPrice);
 
   return (
-    <div className="grid grid-rows-[minmax(0,1fr)_auto] max-h-60 border rounded-lg overflow-hidden">
+    <div
+      className={cn(
+        "grid grid-rows-[minmax(0,1fr)_auto] max-h-60 border rounded-lg overflow-hidden",
+        className,
+      )}
+      {...props}
+    >
       <ScrollArea className="h-full rounded-lg border-b-2 border-dashed">
-        <div className="space-y-2 bg-muted/50 p-4">
+        <div className="space-y-2 bg-muted/10 p-4">
           {cartItems.map((item) => (
             <div
               key={item.product.id}
-              className="flex justify-between text-sm py-1 border-b"
+              className={cn(
+                "flex justify-between text-sm py-1",
+                variant === "default" && "border-b",
+              )}
             >
-              <span>
-                {item.product.name} × {item.quantity}
-              </span>
-              <span className="font-semibold">
-                KSh {(item.product.price * item.quantity).toLocaleString()}
-              </span>
+              {variant === "default" ? (
+                <>
+                  <span>
+                    {item.product.name} × {item.quantity}
+                  </span>
+                  <span className="font-semibold">
+                    KSh {(item.product.price * item.quantity).toLocaleString()}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <CartItem item={item} />
+                </>
+              )}
             </div>
           ))}
         </div>

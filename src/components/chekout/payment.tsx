@@ -17,8 +17,15 @@ import { ScrollArea, ScrollBar } from "@ui/scroll-area";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PaymentFormData, paymentSchema } from "@/schemas/checkout";
 import { usePaymentHandler } from "@/hooks/use-payment";
+import { cn } from "@/lib/utils";
 
-export const Payment = () => {
+export const Payment = ({
+  className,
+  showOrderSummary = true,
+  ...props
+}: React.ComponentProps<typeof ScrollArea> & {
+  showOrderSummary?: boolean;
+}) => {
   // Primitive selectors only
   const setStep = useCheckoutStore((state) => state.setStep);
   const setPaymentPhone = useCheckoutStore((state) => state.setPaymentPhone);
@@ -42,12 +49,13 @@ export const Payment = () => {
   };
 
   return (
-    <ScrollArea className="h-0 flex-1">
+    <ScrollArea className={cn("h-0 flex-1", className)} {...props}>
       <div className="flex-1 pt-6">
-        {/* Order Summary */}
-        <div className="mb-6 px-4">
-          <OrderSummary />
-        </div>
+        {showOrderSummary && (
+          <div className="mb-6 px-4">
+            <OrderSummary />
+          </div>
+        )}
 
         {/* Payment Form */}
         <form onSubmit={form.handleSubmit(onSubmit)}>

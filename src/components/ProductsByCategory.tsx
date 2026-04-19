@@ -1,21 +1,15 @@
 "use client";
-
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import ProductCard from "./ProductCard";
 import { ChevronDown, ChevronUp, Search, X } from "lucide-react";
 import { useCartStore } from "@/stores/cart-store";
-import { Product } from "@/types/product";
 
 const INITIAL_COUNT = 4;
 
-const ProductsByCategory = ({ products }: { products: Product[] }) => {
-  const { setProducts } = useCartStore();
+const ProductsByCategory = () => {
+  const products = useCartStore((state) => state.products);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [searchQuery, setSearchQuery] = useState("");
-
-  useEffect(() => {
-    setProducts(products);
-  }, [setProducts]);
 
   // Extract unique categories from stored products
   const categories = useMemo(() => {

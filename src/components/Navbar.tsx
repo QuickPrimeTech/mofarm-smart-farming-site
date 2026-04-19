@@ -1,7 +1,7 @@
 // @/components/navbar.tsx
 "use client";
 import { ShoppingCart, Menu, Phone, MapPin } from "lucide-react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -10,6 +10,7 @@ import {
   SheetTitle,
   SheetHeader,
   SheetDescription,
+  SheetClose,
 } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -18,14 +19,20 @@ import { MofarmLogo } from "./logo";
 import { Separator } from "./ui/separator";
 import { useCartStore } from "@/stores/cart-store";
 import { useShallow } from "zustand/shallow";
+import { usePathname } from "next/navigation";
 
 const navLinks = [
-  { id: "products", label: "Products" },
-  { id: "contact", label: "Contact" },
-  { id: "faq", label: "FAQs" },
+  { id: "products", label: "Products", href: "/#products" },
+  { id: "special-offers", label: "Special Offers", href: "/#offers" },
+  { id: "contact", label: "Contact", href: "/#contact" },
+  { id: "faq", label: "FAQs", href: "/#faqs" },
 ];
 
 const Navbar = () => {
+  const params = usePathname();
+
+  const homepage = params === "/";
+
   const { totalItems, setIsCartOpen } = useCartStore(
     useShallow((state) => ({
       totalItems: state.totalItems,
@@ -41,11 +48,6 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-    setMobileOpen(false);
-  };
 
   return (
     <>
@@ -81,7 +83,6 @@ const Navbar = () => {
           {/* Logo */}
           <Button
             variant="ghost"
-            onClick={() => scrollTo("hero")}
             className="gap-3 hover:bg-transparent px-0 group"
             asChild
           >
@@ -89,16 +90,20 @@ const Navbar = () => {
               <MofarmLogo className="size-12" />
               <div className="flex flex-col items-start leading-none gap-0.5">
                 <span
-                  className={`font-bold text-base tracking-tight transition-colors duration-300 ${
-                    scrolled ? "text-foreground" : "text-white"
-                  }`}
+                  className={cn(
+                    "font-bold text-base tracking-tight transition-colors duration-300",
+                    scrolled ? "text-foreground" : "text-white",
+                    !homepage && "text-foreground",
+                  )}
                 >
                   Mofarm
                 </span>
                 <span
-                  className={`text-[10px] font-medium tracking-widest uppercase transition-colors duration-300 ${
-                    scrolled ? "text-muted-foreground" : "text-white/60"
-                  }`}
+                  className={cn(
+                    "text-[10px] font-medium tracking-widest uppercase transition-colors duration-300 text-white/60",
+                    scrolled && homepage && "text-muted-foreground",
+                    !homepage && "text-muted-foreground",
+                  )}
                 >
                   Smart Farming
                 </span>
@@ -108,19 +113,20 @@ const Navbar = () => {
 
           {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-1">
-            {navLinks.map(({ id, label }) => (
+            {navLinks.map(({ id, label, href }) => (
               <Button
                 key={id}
                 variant="ghost"
                 size="sm"
-                onClick={() => scrollTo(id)}
-                className={`rounded-full text-sm font-medium transition-colors duration-200 ${
-                  scrolled
-                    ? "text-foreground hover:text-primary hover:bg-primary/10"
-                    : "text-white/80 hover:text-white hover:bg-white/10"
-                }`}
+                className={cn(
+                  "rounded-full text-sm text-foreground hover:text-primary hover:bg-primary/10 font-medium transition-colors duration-200",
+                  !scrolled &&
+                    homepage &&
+                    "text-white/80 hover:text-white hover:bg-white/10",
+                )}
+                asChild
               >
-                {label}
+                <Link href={href}>{label}</Link>
               </Button>
             ))}
           </div>
@@ -147,7 +153,11 @@ const Navbar = () => {
                 <Button
                   variant="ghost"
                   size="icon-lg"
-                  className={cn(`text-white`, scrolled && "text-foreground")}
+                  className={cn(
+                    `text-white`,
+                    scrolled && "text-foreground",
+                    !homepage && !scrolled && "text-foreground",
+                  )}
                 >
                   <Menu />
                 </Button>
@@ -167,18 +177,19 @@ const Navbar = () => {
                 <div className="flex flex-col h-full justify-between p-6">
                   {/* Nav links */}
                   <nav className="flex flex-col gap-1 mt-6">
-                    {navLinks.map(({ id, label }) => (
-                      <>
-                        <Button
-                          key={id}
-                          variant="ghost"
-                          className="justify-start text-base font-normal h-11 rounded-lg text-foreground hover:text-primary hover:bg-primary/10"
-                          onClick={() => scrollTo(id)}
-                        >
-                          {label}
-                        </Button>
+                    {navLinks.map(({ id, label, href }) => (
+                      <React.Fragment key={id}>
+                        <SheetClose asChild>
+                          <Button
+                            variant="ghost"
+                            className="justify-start text-base font-normal h-11 rounded-lg text-foreground hover:text-primary hover:bg-primary/10"
+                            asChild
+                          >
+                            <Link href={href}>{label}</Link>
+                          </Button>
+                        </SheetClose>
                         <Separator key={id} />
-                      </>
+                      </React.Fragment>
                     ))}
                   </nav>
 

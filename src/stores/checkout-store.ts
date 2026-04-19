@@ -9,7 +9,7 @@ export type CheckoutStep =
   | "payment"
   | "processing"
   | "success";
-export type PaymentStatus = "pending" | "completed" | "failed";
+export type PaymentStatus = "pending" | "completed" | "failed" | "cancelled";
 
 type CheckoutState = {
   // Form fields
